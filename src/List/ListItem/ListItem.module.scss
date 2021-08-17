@@ -1,5 +1,6 @@
 .item {
   &:hover {
-    border: 2px solid pink;
+    border: 1px solid transparent;
+    box-shadow: 0 0 0 2px var(--bs-primary);
   }
 }

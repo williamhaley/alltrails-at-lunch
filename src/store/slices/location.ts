@@ -1,11 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { Coordinates } from '../../types';
 import type { RootState } from '../store';
-
-// Serializable representation of coordinates as opposed to GeolocationCoordinates.
-export interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
 
 interface LocationState {
   value: number;
@@ -19,27 +14,24 @@ const initialState: LocationState = {
   coordinates: null,
 };
 
-export const getCurrentLocation = createAsyncThunk(
-  'location',
-  async (thunkAPI) => {
-    return new Promise<Coordinates>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          } as Coordinates);
-        },
-        reject,
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
-        },
-      );
-    });
-  },
-);
+export const getCurrentLocation = createAsyncThunk('location', async () => {
+  return new Promise<Coordinates>((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        } as Coordinates);
+      },
+      reject,
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      },
+    );
+  });
+});
 
 const locationSlice = createSlice({
   name: 'location',
@@ -62,7 +54,7 @@ const locationSlice = createSlice({
         state.coordinates = action.payload;
       })
       .addCase(getCurrentLocation.rejected, (state, action) => {
-        console.error(action.payload);
+        console.error(`error while getting location ${action.payload}`);
         state.isLoading = false;
       });
   },

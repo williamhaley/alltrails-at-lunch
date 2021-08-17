@@ -1,15 +1,20 @@
 import { FormEvent, useContext, useEffect, useState } from 'react';
-import { search } from '../SearchBox/search';
 import styles from './NavBar.module.scss';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store/store';
 import { GoogleContext } from '../Google/GoogleProvider';
-import { replace } from '../store/slices/places';
+import { search } from '../store/slices/places';
 
 const NavBar: React.FC<React.HTMLAttributes<HTMLElement>> = (props) => {
-  const coordinates = useAppSelector(
-    (state: RootState) => state.location.coordinates,
+  const { isLoadingResults, coordinates } = useAppSelector(
+    (state: RootState) => {
+      return {
+        isLoadingResults: state.places.isLoading,
+        coordinates: state.location.coordinates,
+      };
+    },
   );
+
   const dispatch = useAppDispatch();
 
   const { isGoogleLoaded, mapInstance } = useContext(GoogleContext);
@@ -25,7 +30,7 @@ const NavBar: React.FC<React.HTMLAttributes<HTMLElement>> = (props) => {
 
   return (
     <nav
-      className={`${props.className} navbar navbar-expand-lg navbar-light bg-light ${styles.nav}`}
+      className={`${props.className} navbar navbar-expand-lg navbar-light bg-white ${styles.nav}`}
     >
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
@@ -38,6 +43,10 @@ const NavBar: React.FC<React.HTMLAttributes<HTMLElement>> = (props) => {
           onSubmit={async (event: FormEvent) => {
             event.preventDefault();
 
+            if (isLoadingResults) {
+              return;
+            }
+
             if (service === null || coordinates === null) {
               alert('unknown error');
 
@@ -49,27 +58,30 @@ const NavBar: React.FC<React.HTMLAttributes<HTMLElement>> = (props) => {
             const query = `${formData.get('query') ?? ''}`;
 
             try {
-              const results = await search(service, coordinates, query);
-
-              dispatch(replace(results));
+              dispatch(search({ service, coordinates, query }));
             } catch (error) {
-              console.error(error);
+              console.error(`error while searching ${error}`);
             }
           }}
         >
-          <button className="btn btn-outline-success me-2" type="submit">
+          <button
+            className="btn btn-outline-primary me-2"
+            type="submit"
+            disabled={isLoadingResults || coordinates === null}
+          >
             Filter
           </button>
           <div className="input-group">
             <input
               type="text"
               name="query"
+              disabled={isLoadingResults || coordinates === null}
               className="form-control"
               placeholder="Search for a restaurant"
               aria-label="Search for a restaurant"
             />
             <button className="btn btn-outline-secondary" type="button">
-              <i className="bi bi-search"></i>
+              <i className="bi bi-search text-primary"></i>
             </button>
           </div>
         </form>

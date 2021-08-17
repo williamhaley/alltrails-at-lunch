@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Place } from '../../store/slices/places';
 import Stars from './Stars';
 import styles from './ListItem.module.scss';
+import { Place } from '../../types';
 
 interface Props {
   place: Place;
 }
 
-const ListItem = (props: Props) => {
+const ListItem: React.FC<React.HTMLAttributes<HTMLDivElement> & Props> = (
+  props,
+) => {
   const [dollars, setDollars] = useState('');
 
   useEffect(() => {
@@ -19,7 +21,7 @@ const ListItem = (props: Props) => {
   }, [props.place.priceLevel]);
 
   return (
-    <div className={`card p-3 ${styles.item}`}>
+    <div className={`${props.className} card p-3 ${styles.item}`}>
       <div className="row g-0">
         <div className="col-md-4">
           <img

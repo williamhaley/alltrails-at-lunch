@@ -18,28 +18,39 @@ function App() {
   return (
     <Provider store={store}>
       <GoogleProvider>
-        <div className={`container ${styles.container}`}>
-          <NavBar className={styles.nav} />
+        <div className="vw-100 vh-100">
+          <div className={`container h-100 ${styles.container}`}>
+            <NavBar className={styles.nav} />
 
-          {/* On larger viewports always show these views (d-sm-block) using
-          their column proportions, but on smaller viewports allow explicitly
-          hiding them. */}
-          <div className="row">
-            <List
-              className={`d-sm-block col-sm-3 ${!mobileShowList && 'd-none'}`}
-            />
-            <Map className={`d-sm-block col ${mobileShowList && 'd-none'}`} />
+            <main className={`${styles.main} overflow-hidden h-100`}>
+              <div className="row h-100">
+                {/* On larger viewports always show these views (d-sm-block) using
+                their column proportions, but on smaller viewports allow explicitly
+                hiding them. */}
+                <List
+                  className={`p-3 bg-light d-sm-block col-sm-3 ${
+                    !mobileShowList && 'd-none'
+                  }`}
+                />
+                <Map
+                  className={`d-sm-block col ${mobileShowList && 'd-none'}`}
+                />
+              </div>
+
+              {/* This button is only visible on mobile */}
+              <button
+                className="btn btn-primary d-sm-none mb-3 position-fixed start-50 fixed-bottom translate-middle"
+                onClick={() => {
+                  setMobileShowList(!mobileShowList);
+                }}
+              >
+                <i
+                  className={`bi bi-${mobileShowList ? 'geo-alt' : 'list-ul'}`}
+                ></i>
+                {mobileShowList ? 'Map' : 'List'}
+              </button>
+            </main>
           </div>
-
-          {/* This button is only visible on mobile */}
-          <button
-            className="d-sm-none"
-            onClick={() => {
-              setMobileShowList(!mobileShowList);
-            }}
-          >
-            {mobileShowList ? 'Map' : 'List'}
-          </button>
         </div>
       </GoogleProvider>
     </Provider>
