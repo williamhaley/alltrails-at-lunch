@@ -28,7 +28,7 @@ function App() {
                 their column proportions, but on smaller viewports allow explicitly
                 hiding them. */}
                 <List
-                  className={`p-3 bg-light d-sm-block col-sm-3 ${
+                  className={`p-3 bg-light d-sm-block col-sm-4 ${
                     !mobileShowList && 'd-none'
                   }`}
                 />

@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
+import { googleApiKey } from '../config';
 
 interface State {
   isGoogleLoaded: boolean;
@@ -25,7 +26,7 @@ const GoogleProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     loadScript(
-      'https://maps.googleapis.com/maps/api/js?key=&libraries=places',
+      `https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places`,
       () => {
         setIsGoogleLoaded(true);
       },

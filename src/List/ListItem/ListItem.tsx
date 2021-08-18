@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
-import Stars from './Stars';
 import styles from './ListItem.module.scss';
 import { Place } from '../../types';
+import Rating from './Rating';
+import { toggleFavorite } from '../../store/slices/favorites';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { RootState } from '../../store/store';
 
 interface Props {
   place: Place;
@@ -11,6 +14,13 @@ const ListItem: React.FC<React.HTMLAttributes<HTMLDivElement> & Props> = (
   props,
 ) => {
   const [dollars, setDollars] = useState('');
+
+  const dispatch = useAppDispatch();
+  const { isFavorited } = useAppSelector((state: RootState) => {
+    return {
+      isFavorited: state.favorites.byId[props.place.id],
+    };
+  });
 
   useEffect(() => {
     if (!props.place.priceLevel) {
@@ -25,18 +35,36 @@ const ListItem: React.FC<React.HTMLAttributes<HTMLDivElement> & Props> = (
       <div className="row g-0">
         <div className="col-md-4">
           <img
-            className="img-fluid rounded-start"
+            className="img"
             alt={`${props.place.name}`}
             src={props.place.photoUrl}
           />
         </div>
 
-        <div className="col-md-8">
-          <div className="card-body">
-            <h5 className="card-title">{props.place.name}</h5>
-            <Stars rating={props.place.rating} />
+        <div className="col-md-7">
+          <div className="card-body p-0">
+            <h5 className="card-title text-truncate">{props.place.name}</h5>
+            <Rating
+              rating={props.place.rating}
+              totalReviews={props.place.totalReviews}
+            />
             {dollars && <p className="card-text">{dollars}</p>}
           </div>
+        </div>
+
+        <div className="col-md-1">
+          <button
+            className="btn btn-link"
+            onClick={() => {
+              dispatch(toggleFavorite(props.place.id));
+            }}
+          >
+            <i
+              className={`bi bi-heart${
+                isFavorited ? '-fill' : ''
+              } text-primary`}
+            ></i>
+          </button>
         </div>
       </div>
     </div>

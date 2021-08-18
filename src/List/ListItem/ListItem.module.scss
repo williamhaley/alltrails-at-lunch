@@ -1,4 +1,10 @@
 .item {
+  img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+  }
+
   &:hover {
     border: 1px solid transparent;
     box-shadow: 0 0 0 2px var(--bs-primary);

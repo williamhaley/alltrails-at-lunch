@@ -89,8 +89,6 @@ const Map: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
 
     const newMarkers = [];
 
-    console.log('huh...', places);
-
     for (const place of places) {
       const marker = new google.maps.Marker({
         map: mapInstance,

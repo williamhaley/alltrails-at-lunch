@@ -1,14 +1,18 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Coordinates, Place } from '../../types';
+import { Coordinates, Place, SortType } from '../../types';
 
-interface ResultsState {
+const MAX_RADIUS_METERS = 2000;
+
+interface PlacesState {
   places: Array<Place>;
   isLoading: boolean;
+  sort: SortType;
 }
 
-const initialState: ResultsState = {
+const initialState: PlacesState = {
   places: [],
   isLoading: false,
+  sort: SortType.RatingsDescending,
 };
 
 interface SearchArguments {
@@ -31,7 +35,7 @@ export const search = createAsyncThunk(
         coordinates.longitude,
       ),
       keyword: query,
-      radius: 50,
+      radius: MAX_RADIUS_METERS,
       type: 'restaurant',
     };
 
@@ -67,13 +71,15 @@ export const search = createAsyncThunk(
               // TODO WFH How often do we actually not have these fields? If
               // Google is marking them optional I'm assuming that's realistic.
               if (next.geometry!.location) {
-                console.log('yo', next);
-
                 memo.push({
                   id: next.place_id!,
                   name: next.name!,
                   rating: next.rating!,
-                  photoUrl: next.photos![0].getUrl(),
+                  totalReviews: next.user_ratings_total!,
+                  photoUrl: next.photos![0].getUrl({
+                    maxWidth: 100,
+                    maxHeight: 100,
+                  }),
                   priceLevel: next.price_level!,
                   coordinates: {
                     latitude: next.geometry!.location.lat(),
@@ -94,10 +100,29 @@ export const search = createAsyncThunk(
   },
 );
 
+const sortPlaces = (places: Array<Place>, sortType: SortType) => {
+  places.sort((a, b) => {
+    return sortType === SortType.RatingsAscending
+      ? a.rating - b.rating
+      : b.rating - a.rating;
+  });
+};
+
 const placesSlice = createSlice({
   name: 'places',
   initialState,
-  reducers: {},
+  reducers: {
+    toggleSort: (state: PlacesState) => {
+      state.sort =
+        state.sort === SortType.RatingsAscending
+          ? SortType.RatingsDescending
+          : SortType.RatingsAscending;
+
+      sortPlaces(state.places, state.sort);
+
+      return state;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(search.pending, (state) => {
@@ -105,13 +130,18 @@ const placesSlice = createSlice({
       })
       .addCase(search.fulfilled, (state, action) => {
         state.isLoading = false;
+
+        sortPlaces(action.payload, state.sort);
+
         state.places = action.payload;
       })
       .addCase(search.rejected, (state, action) => {
-        console.error(`error while getting results ${action.payload}`);
+        console.error(`error while getting places ${action.payload}`);
         state.isLoading = false;
       });
   },
 });
+
+export const { toggleSort } = placesSlice.actions;
 
 export default placesSlice.reducer;
