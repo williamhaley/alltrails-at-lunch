@@ -2,10 +2,10 @@
 
 ## Open Ended Questions/Assumptions
 
-The exercise description and designs seem ambiguous (I'd assume, purposefully) in a few aspects. Also, these are my general notes and thoughts while working.
+The exercise description and designs seem ambiguous (I'd assume, purposefully) in a few aspects. These are my general notes and thoughts while working.
 
-- When clicking "Filter" it changes to "Sort". Is it truly a filter or a sort?
-- Is it assumed we prompt users for their current location/location API usage? If not, how does the app gracefully fall back?
+- When clicking "Filter" it changes to "Sort" in the design. Is it truly a filter or a sort?
+- Is it assumed we prompt users for their current location/location API permissions? If not, how does the app gracefully fall back?
 - Is there an ideal Places API for the types of searches we want? Do we want to search on terms like "Pizza" and find best-matches based purely on proximity? Seems reasonable considering it's a hiking-related app! We probably want walking distance.
 - Do we think autocomplete is valuable? Probably, but wouldn't that be cleaner for mobile in its own UI? The designs don't represent that possible state.
 - How do we want to handle loading/error states?

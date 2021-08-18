@@ -13,15 +13,15 @@ interface MarkerState {
 const Map: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
   const dispatch = useAppDispatch();
 
-  const { coordinates, isLoadingPlaces, places, selectedPlace } =
-    useAppSelector((state: RootState) => {
+  const { coordinates, places, selectedPlace } = useAppSelector(
+    (state: RootState) => {
       return {
         coordinates: state.location.coordinates,
-        isLoadingPlaces: state.places.isLoading,
         places: state.places.places,
         selectedPlace: state.places.selectedPlace,
       };
-    });
+    },
+  );
 
   const infoWindowContentRef = createRef<HTMLDivElement>();
 
@@ -34,13 +34,6 @@ const Map: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
     },
     { oldByPlaceId: {}, currentByPlaceId: {} },
   );
-
-  // Immediately clear markers when a search is performed.
-  useEffect(() => {
-    if (isLoadingPlaces) {
-      updateMarkers({});
-    }
-  }, [isLoadingPlaces]);
 
   const { isGoogleLoaded, mapInstance, setMapInstance } =
     useContext(GoogleContext);

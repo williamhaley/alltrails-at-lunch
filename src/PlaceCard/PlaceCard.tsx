@@ -38,7 +38,7 @@ const PlaceCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Props> = (
         />
       </div>
 
-      <div className="card-body p-0">
+      <div className="card-body p-0 overflow-hidden">
         <div className="card-title mb-0 text-bold text-truncate">
           {props.place.name}
         </div>

@@ -36,14 +36,7 @@ export const getCurrentLocation = createAsyncThunk('location', async () => {
 const locationSlice = createSlice({
   name: 'location',
   initialState,
-  reducers: {
-    increment(state) {
-      state.value++;
-    },
-    decrement(state) {
-      state.value--;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getCurrentLocation.pending, (state, action) => {
@@ -59,8 +52,6 @@ const locationSlice = createSlice({
       });
   },
 });
-
-export const { increment, decrement } = locationSlice.actions;
 
 export const selectCount = (state: RootState) => state.location.value;
 

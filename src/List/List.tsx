@@ -39,7 +39,7 @@ const List: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
       ) : (
         places.map((place: Place) => (
           <PlaceCard
-            className={`mb-3 p-3 mx-3 ${styles.item}`}
+            className={`mb-2 p-2 mx-2 ${styles.item}`}
             key={place.id}
             place={place}
           />
