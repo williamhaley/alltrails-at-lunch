@@ -18,3 +18,7 @@ export enum SortType {
   RatingsDescending,
   RatingsAscending,
 }
+
+export enum PlaceCardType {
+  map,
+}

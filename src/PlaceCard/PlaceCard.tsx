@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import Rating from './Rating';
-import { Place } from '../types';
+import { Place, PlaceCardType } from '../types';
 import Heart from './Heart';
-import styles from './PlaceCard.module.scss';
 
 interface Props {
   place: Place;
-  showHeartIcon: boolean;
+  type?: PlaceCardType;
 }
 
 const PlaceCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Props> = (
@@ -22,34 +21,39 @@ const PlaceCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Props> = (
     setDollars(new Array(props.place.priceLevel).fill('$').join(''));
   }, [props.place.priceLevel]);
 
+  const isMapMode = props.type === PlaceCardType.map;
+
   return (
-    <div className={`${props.className} card ${styles.item}`}>
-      <div className="row g-0">
-        <div className="col-4">
-          <div className={styles.imageWrapper}>
-            <img src={props.place.photoUrl} alt={props.place.name} />
-          </div>
-        </div>
-
-        <div className="col-1"></div>
-
-        <div className={props.showHeartIcon ? 'col-6' : 'col-7'}>
-          <div className="card-body p-0">
-            <h5 className="card-title text-truncate">{props.place.name}</h5>
-            <Rating
-              rating={props.place.rating}
-              totalReviews={props.place.totalReviews}
-            />
-            {dollars && <p className="card-text">{dollars}</p>}
-          </div>
-        </div>
-
-        {props.showHeartIcon && (
-          <div className="col-1">
-            <Heart place={props.place} />
-          </div>
-        )}
+    <div className={`${props.className} card "d-flex flex-row`}>
+      <div className="d-flex align-items-center">
+        <img
+          className="me-3"
+          style={{
+            width: 64,
+            height: 64,
+            objectFit: 'cover',
+          }}
+          src={props.place.photoUrl}
+          alt={props.place.name}
+        />
       </div>
+
+      <div className="card-body p-0">
+        <div className="card-title mb-0 text-bold text-truncate">
+          {props.place.name}
+        </div>
+        <Rating
+          rating={props.place.rating}
+          totalReviews={props.place.totalReviews}
+        />
+        {dollars && <div className="text-small">{dollars}</div>}
+      </div>
+
+      {!isMapMode && (
+        <div className="d-flex align-items-start">
+          <Heart place={props.place} />
+        </div>
+      )}
     </div>
   );
 };

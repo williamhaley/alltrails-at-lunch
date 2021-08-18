@@ -1,7 +1,6 @@
 import { forwardRef, Ref } from 'react';
 import PlaceCard from '../PlaceCard/PlaceCard';
-import { Place } from '../types';
-import styles from './InfoWindowContent.module.scss';
+import { Place, PlaceCardType } from '../types';
 
 interface Props {
   place: Place;
@@ -13,8 +12,8 @@ const InfoWindowContent = forwardRef(
       <div ref={ref}>
         <PlaceCard
           place={props.place}
-          showHeartIcon={false}
-          className={`border-0 ${styles.item}`}
+          type={PlaceCardType.map}
+          className="border-0"
         />
       </div>
     );

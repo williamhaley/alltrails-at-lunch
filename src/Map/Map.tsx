@@ -130,7 +130,7 @@ const Map: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
 
   return (
     <div id="map" className={`${props.className} w-100 h-100`} ref={mapDivRef}>
-      {isLoading && <div>Loading...</div>}
+      {isLoading && <div className="p-2">Loading...</div>}
 
       {selectedPlace !== null && (
         <InfoWindowContent ref={infoWindowContentRef} place={selectedPlace} />

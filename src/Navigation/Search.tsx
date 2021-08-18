@@ -61,7 +61,7 @@ const Search = () => {
           placeholder="Search for a restaurant"
           aria-label="Search for a restaurant"
         />
-        <button className="btn btn-outline-secondary" type="button">
+        <button className="btn btn-outline-secondary" type="submit">
           <i className="bi bi-search text-primary"></i>
         </button>
       </div>

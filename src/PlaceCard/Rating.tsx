@@ -1,5 +1,3 @@
-import styles from './Rating.module.scss';
-
 interface Props {
   rating: number;
   totalReviews: number;
@@ -19,9 +17,7 @@ const Rating = ({ rating, totalReviews }: Props) => {
         data-testid={i < fullStars ? 'filled-star' : 'empty-star'}
         key={i}
         className={`bi ${
-          i < fullStars
-            ? `${styles.full} bi-star-fill`
-            : `${styles.empty} bi-star`
+          i < fullStars ? `text-warning bi-star-fill` : `text-secondary bi-star`
         }`}
       ></i>,
     );

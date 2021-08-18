@@ -1,4 +1,10 @@
-$primary: green;
+$primary: #428a13;
+$secondary: #808080;
+$warning: #f5d24b;
 
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-icons/font/bootstrap-icons';
+
+.text-small {
+  font-size: 0.8em;
+}

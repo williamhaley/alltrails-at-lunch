@@ -16,7 +16,7 @@ const List: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
   return (
     <div className={`${props.className} overflow-scroll h-100`}>
       {isLoadingResults ? (
-        <div className="card" aria-hidden="true">
+        <div className="card p-3 mx-3" aria-hidden="true">
           <div className="card-body">
             <h5 className="card-title placeholder-glow">
               <span className="placeholder col-6"></span>
@@ -31,7 +31,7 @@ const List: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
           </div>
         </div>
       ) : !isLoadingResults && places.length === 0 ? (
-        <div className="card" aria-hidden="true">
+        <div className="card p-3 mx-3" aria-hidden="true">
           <div className="card-body">
             <h5 className="card-title">No results! 😢</h5>
           </div>
@@ -39,10 +39,9 @@ const List: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
       ) : (
         places.map((place: Place) => (
           <PlaceCard
-            className={`mb-3 p-3 ${styles.item}`}
+            className={`mb-3 p-3 mx-3 ${styles.item}`}
             key={place.id}
             place={place}
-            showHeartIcon={true}
           />
         ))
       )}

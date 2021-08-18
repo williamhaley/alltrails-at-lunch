@@ -19,7 +19,7 @@ function App() {
     <Provider store={store}>
       <GoogleProvider>
         <div className="vw-100 vh-100 bg-light">
-          <div className={`container h-100 ${styles.container}`}>
+          <div className={`container h-100 p-0 ${styles.container}`}>
             <NavBar className={styles.nav} />
 
             <main className={`${styles.main} overflow-hidden h-100`}>
@@ -39,13 +39,15 @@ function App() {
 
               {/* This button is only visible on mobile */}
               <button
-                className="btn btn-primary d-sm-none mb-3 position-fixed start-50 fixed-bottom translate-middle"
+                className="btn btn-primary d-sm-none mb-3 position-fixed start-50 fixed-bottom translate-middle text-white"
                 onClick={() => {
                   setMobileShowList(!mobileShowList);
                 }}
               >
                 <i
-                  className={`bi bi-${mobileShowList ? 'geo-alt' : 'list-ul'}`}
+                  className={`me-1 bi bi-${
+                    mobileShowList ? 'geo-alt' : 'list-ul'
+                  }`}
                 ></i>
                 {mobileShowList ? 'Map' : 'List'}
               </button>
