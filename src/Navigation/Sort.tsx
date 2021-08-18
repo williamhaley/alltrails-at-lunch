@@ -1,4 +1,4 @@
-import { createRef, forwardRef, Ref, useRef } from 'react';
+import { createRef, forwardRef, Ref, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store/store';
 import { Modal } from 'bootstrap';
@@ -7,40 +7,41 @@ import { toggleSort } from '../store/slices/places';
 
 interface ModalProps {
   sort: SortType;
-  onToggle: () => void;
+  onApply: (sortType: SortType) => void;
 }
 
+const sortOptions = [
+  { text: 'Ratings High to Low', sort: SortType.RatingsDescending },
+  { text: 'Ratings Low to High', sort: SortType.RatingsAscending },
+];
+
 const ModalForm = forwardRef((props: ModalProps, ref: Ref<HTMLDivElement>) => {
+  const [selection, setSelection] = useState(props.sort);
+
   return (
     <div className="modal fade" tabIndex={-1} ref={ref}>
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-body">
             <form>
-              <div className="form-check">
-                <label className="form-check-label">
-                  <input
-                    className="form-check-input"
-                    name="sort"
-                    type="radio"
-                    onChange={props.onToggle}
-                    checked={props.sort === SortType.RatingsDescending}
-                  ></input>
-                  Ratings High to Low
-                </label>
-              </div>
-              <div className="form-check">
-                <label className="form-check-label">
-                  <input
-                    className="form-check-input"
-                    name="sort"
-                    type="radio"
-                    onChange={props.onToggle}
-                    checked={props.sort === SortType.RatingsAscending}
-                  ></input>
-                  Ratings Low to High
-                </label>
-              </div>
+              {sortOptions.map((sortOption, index) => {
+                return (
+                  <div key={index} className="form-check">
+                    <label className="form-check-label">
+                      <input
+                        className="form-check-input"
+                        name="sort"
+                        type="radio"
+                        onChange={() => {
+                          setSelection(sortOption.sort);
+                        }}
+                        checked={selection === sortOption.sort}
+                      ></input>
+                      {sortOption.text}
+                    </label>
+                  </div>
+                );
+              })}
             </form>
           </div>
           <div className="modal-footer">
@@ -48,6 +49,9 @@ const ModalForm = forwardRef((props: ModalProps, ref: Ref<HTMLDivElement>) => {
               type="button"
               className="btn btn-link"
               data-bs-dismiss="modal"
+              onClick={() => {
+                props.onApply(selection);
+              }}
             >
               Apply
             </button>
@@ -86,7 +90,6 @@ const Sort = () => {
         disabled={isLoadingResults || coordinates === null}
         onClick={() => {
           if (modalRef.current !== null && modal.current === null) {
-            console.log('sure');
             modal.current = new Modal(modalRef.current);
           }
 
@@ -100,7 +103,11 @@ const Sort = () => {
       <ModalForm
         ref={modalRef}
         sort={sortType}
-        onToggle={() => {
+        onApply={(newSortType: SortType) => {
+          if (newSortType === sortType) {
+            return;
+          }
+
           dispatch(toggleSort());
         }}
       />
