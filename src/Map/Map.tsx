@@ -1,61 +1,44 @@
-import { useContext, useEffect, useReducer, useRef, useState } from 'react';
-import { useAppSelector } from '../store/hooks';
+import { createRef, useContext, useEffect, useReducer, useRef } from 'react';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { RootState } from '../store/store';
 import { GoogleContext } from '../Google/GoogleProvider';
-import { Place } from '../types';
-
-interface Selection {
-  marker: google.maps.Marker;
-  place: Place;
-}
+import { selectPlace } from '../store/slices/places';
+import InfoWindowContent from './InfoWindowContent';
 
 interface MarkerState {
-  old: Array<google.maps.Marker>;
-  new: Array<google.maps.Marker>;
+  oldByPlaceId: { [key: string]: google.maps.Marker };
+  currentByPlaceId: { [key: string]: google.maps.Marker };
 }
 
-const getDetailsContent = (place: Place) => {
-  const content = document.createElement('div');
-
-  const nameElement = document.createElement('h2');
-  nameElement.textContent = place.name;
-  content.appendChild(nameElement);
-
-  const placeIdElement = document.createElement('p');
-  placeIdElement.textContent = place.id!;
-  content.appendChild(placeIdElement);
-
-  return content;
-};
-
 const Map: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
-  const { coordinates, isLoadingPlaces, places } = useAppSelector(
-    (state: RootState) => {
+  const dispatch = useAppDispatch();
+
+  const { coordinates, isLoadingPlaces, places, selectedPlace } =
+    useAppSelector((state: RootState) => {
       return {
         coordinates: state.location.coordinates,
         isLoadingPlaces: state.places.isLoading,
         places: state.places.places,
+        selectedPlace: state.places.selectedPlace,
       };
-    },
-  );
+    });
 
-  const [currentSelection, setCurrentSelection] = useState<Selection | null>(
-    null,
-  );
+  const infoWindowContentRef = createRef<HTMLDivElement>();
+
   const [markerState, updateMarkers] = useReducer(
-    (state: MarkerState, action: any) => {
+    (state: MarkerState, newPlaces: { [key: string]: google.maps.Marker }) => {
       return {
-        old: state.new,
-        new: action,
+        oldByPlaceId: state.currentByPlaceId,
+        currentByPlaceId: newPlaces,
       };
     },
-    { old: [], new: [] },
+    { oldByPlaceId: {}, currentByPlaceId: {} },
   );
 
   // Immediately clear markers when a search is performed.
   useEffect(() => {
     if (isLoadingPlaces) {
-      updateMarkers([]);
+      updateMarkers({});
     }
   }, [isLoadingPlaces]);
 
@@ -64,30 +47,38 @@ const Map: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
 
   // Clear old markers as needed.
   useEffect(() => {
-    if (markerState.old.length > 0) {
-      for (const marker of markerState.old) {
-        marker.setMap(null);
-      }
+    for (const marker of Object.values(markerState.oldByPlaceId)) {
+      marker.setMap(null);
     }
-  }, [markerState, markerState.old]);
+  }, [markerState, markerState.oldByPlaceId]);
 
   useEffect(() => {
-    if (infoWindowRef.current === null || currentSelection === null) {
+    if (
+      infoWindowRef.current === null ||
+      selectedPlace === null ||
+      infoWindowContentRef.current === null
+    ) {
       return;
     }
 
-    const content = getDetailsContent(currentSelection.place);
+    const selectedMarker = markerState.currentByPlaceId[selectedPlace.id];
 
-    infoWindowRef.current.setContent(content);
-    infoWindowRef.current.open(mapInstance, currentSelection.marker);
-  }, [currentSelection, mapInstance]);
+    infoWindowRef.current.setContent(infoWindowContentRef.current);
+    infoWindowRef.current.open(mapInstance, selectedMarker);
+  }, [
+    selectedPlace,
+    places,
+    mapInstance,
+    markerState.currentByPlaceId,
+    infoWindowContentRef,
+  ]);
 
   useEffect(() => {
     if (mapInstance === null) {
       return;
     }
 
-    const newMarkers = [];
+    const newMarkers = {} as { [key: string]: google.maps.Marker };
 
     for (const place of places) {
       const marker = new google.maps.Marker({
@@ -99,17 +90,14 @@ const Map: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
       });
 
       google.maps.event.addListener(marker, 'click', () => {
-        setCurrentSelection({
-          place,
-          marker,
-        });
+        dispatch(selectPlace(place));
       });
 
-      newMarkers.push(marker);
+      newMarkers[place.id] = marker;
     }
 
     updateMarkers(newMarkers);
-  }, [places, mapInstance]);
+  }, [dispatch, places, mapInstance]);
 
   const mapDivRef = useRef<HTMLDivElement | null>(null);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
@@ -143,6 +131,10 @@ const Map: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
   return (
     <div id="map" className={`${props.className} w-100 h-100`} ref={mapDivRef}>
       {isLoading && <div>Loading...</div>}
+
+      {selectedPlace !== null && (
+        <InfoWindowContent ref={infoWindowContentRef} place={selectedPlace} />
+      )}
     </div>
   );
 };

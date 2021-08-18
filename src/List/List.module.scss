@@ -1,9 +1,5 @@
 .item {
-  img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-  }
+  cursor: pointer;
 
   &:hover {
     border: 1px solid transparent;

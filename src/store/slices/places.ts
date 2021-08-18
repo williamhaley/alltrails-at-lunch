@@ -1,16 +1,18 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Coordinates, Place, SortType } from '../../types';
 
 const MAX_RADIUS_METERS = 2000;
 
 interface PlacesState {
   places: Array<Place>;
+  selectedPlace: Place | null;
   isLoading: boolean;
   sort: SortType;
 }
 
 const initialState: PlacesState = {
   places: [],
+  selectedPlace: null,
   isLoading: false,
   sort: SortType.RatingsDescending,
 };
@@ -112,6 +114,11 @@ const placesSlice = createSlice({
   name: 'places',
   initialState,
   reducers: {
+    selectPlace: (state: PlacesState, action: PayloadAction<Place>) => {
+      state.selectedPlace = action.payload;
+
+      return state;
+    },
     toggleSort: (state: PlacesState) => {
       state.sort =
         state.sort === SortType.RatingsAscending
@@ -131,7 +138,17 @@ const placesSlice = createSlice({
       .addCase(search.fulfilled, (state, action) => {
         state.isLoading = false;
 
-        sortPlaces(action.payload, state.sort);
+        const newPlaces = action.payload;
+
+        sortPlaces(newPlaces, state.sort);
+
+        // If we had a selection, but the new results negate it, then unset it.
+        if (
+          state.selectedPlace !== null &&
+          !newPlaces.some((place) => place.id === state.selectedPlace!.id)
+        ) {
+          state.selectedPlace = null;
+        }
 
         state.places = action.payload;
       })
@@ -142,6 +159,6 @@ const placesSlice = createSlice({
   },
 });
 
-export const { toggleSort } = placesSlice.actions;
+export const { toggleSort, selectPlace } = placesSlice.actions;
 
 export default placesSlice.reducer;

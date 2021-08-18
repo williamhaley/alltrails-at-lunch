@@ -1,8 +1,9 @@
 import React from 'react';
+import PlaceCard from '../PlaceCard/PlaceCard';
 import { useAppSelector } from '../store/hooks';
 import { RootState } from '../store/store';
 import { Place } from '../types';
-import ListItem from './ListItem/ListItem';
+import styles from './List.module.scss';
 
 const List: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
   const { isLoadingResults, places } = useAppSelector((state: RootState) => {
@@ -37,7 +38,12 @@ const List: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
         </div>
       ) : (
         places.map((place: Place) => (
-          <ListItem className="mb-3" key={place.id} place={place} />
+          <PlaceCard
+            className={`mb-3 p-3 ${styles.item}`}
+            key={place.id}
+            place={place}
+            showHeartIcon={true}
+          />
         ))
       )}
     </div>

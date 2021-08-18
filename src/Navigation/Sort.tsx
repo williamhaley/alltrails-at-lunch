@@ -100,6 +100,7 @@ const Sort = () => {
       >
         Sort
       </button>
+
       <ModalForm
         ref={modalRef}
         sort={sortType}
