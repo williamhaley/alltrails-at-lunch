@@ -18,7 +18,7 @@ function App() {
   return (
     <Provider store={store}>
       <GoogleProvider>
-        <div className="vw-100 vh-100">
+        <div className="vw-100 vh-100 bg-light">
           <div className={`container h-100 ${styles.container}`}>
             <NavBar className={styles.nav} />
 
