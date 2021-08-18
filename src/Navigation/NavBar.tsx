@@ -6,9 +6,9 @@ const NavBar: React.FC<React.HTMLAttributes<HTMLElement>> = (props) => {
     <nav
       className={`${props.className} d-flex navbar navbar-expand-lg navbar-light bg-white justify-content-between shadow-sm`}
     >
-      <div className="container-fluid">
+      <div className="container-fluid justify-content-center justify-content-sm-between">
         <a
-          className="navbar-brand d-flex justify-content-center justify-content-sm-start w-100"
+          className="navbar-brand d-flex justify-content-center justify-content-sm-start"
           href="/"
         >
           <img src="/logo.svg" alt="AllTrails logo" />{' '}
