@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
-import { googleApiKey } from '../config';
+
+const googleApiKey = process.env.REACT_APP_MAPS_KEY;
 
 interface State {
   isGoogleLoaded: boolean;

@@ -2,11 +2,10 @@ name: GitHub Pages Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,6 +28,8 @@ jobs:
         run: npm test -- --watchAll=false
 
       - name: Build app
+        env:
+          REACT_APP_MAPS_KEY: ${{ secrets.MAPS_KEY }}
         run: npm run build
 
       - name: Deploy
